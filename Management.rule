@@ -1,0 +1,129 @@
+@RULE Management
+#
+#  The Management Game
+#
+#  Peter Turney, June 28, 2021
+#
+#  Here is a set of rules that all have the same general form (B3/S23): 
+#  birth with three neighbours (B3), survival with two or three neighbours
+#  (S23). All of the rules make the same patterns as the Game of Life, 
+#  except the cells are coloured differently.
+#
+#  (1) The Game of Life
+#      - 2 colours: white background, black foreground
+#      - https://www.conwaylife.com/wiki/Conway%27s_Game_of_Life
+#      - built into Golly as "Life" or "B3/S23"
+#
+#  (2) The Immigration Game
+#      - 3 colours: white background, red and blue foreground
+#      - https://github.com/pdturney/modeling-symbiosis-revised/
+#        blob/master/Immigration.rule
+#
+#  (3) The Management Game
+#      - 6 colours: white, red, blue, orange, green, purple
+#      - described below
+#
+#  The Management Game has six states (colours):
+#
+#    0 = dead                       = white
+#    1 = player 1 alone             = red
+#    2 = player 2 alone             = blue
+#    3 = player 1 with interaction  = orange (red + yellow)
+#    4 = player 2 with interaction  = green (blue + yellow)
+#    5 = border marker              = purple (another kind of dead)
+#
+#  Transition rules are checked in the order given: The first rule that 
+#  matches is applied.
+#
+@TABLE
+#
+n_states:6
+neighborhood:Moore
+symmetries:permute
+#
+#  Variables
+#
+var aa={1,2,3,4}                 # alive: red, blue, orange, green
+var ab={1,2,3,4}                 # alive: red, blue, orange, green
+var ac={1,2,3,4}                 # alive: red, blue, orange, green
+var ad={1,2,3,4}                 # alive: red, blue, orange, green
+var ae={1,2,3,4}                 # alive: red, blue, orange, green
+#
+var ba={2,3,4}                   # not red: blue, orange, green
+#
+var ca={1,3,4}                   # not blue: red, orange, green
+#
+var da={1,3}                     # red or orange
+var db={1,3}                     # red or orange
+#
+var ea={2,4}                     # blue or green
+var eb={2,4}                     # blue or green
+#
+var fa={0,5}                     # dead: white or purple
+var fb={0,5}                     # dead: white or purple
+var fc={0,5}                     # dead: white or purple
+var fd={0,5}                     # dead: white or purple
+var fe={0,5}                     # dead: white or purple
+var ff={0,5}                     # dead: white or purple
+var fg={0,5}                     # dead: white or purple
+#
+var ga={0,1,2,3,4,5}             # anything: dead or alive
+var gb={0,1,2,3,4,5}             # anything: dead or alive
+var gc={0,1,2,3,4,5}             # anything: dead or alive
+var gd={0,1,2,3,4,5}             # anything: dead or alive
+var ge={0,1,2,3,4,5}             # anything: dead or alive
+var gf={0,1,2,3,4,5}             # anything: dead or alive
+var gg={0,1,2,3,4,5}             # anything: dead or alive
+var gh={0,1,2,3,4,5}             # anything: dead or alive
+#
+#  C,N,NE,E,SE,S,SW,W,NW,C' for the Moore neighborhood
+#
+#  Birth of a new life with 3 live neighbours
+#
+fa,1,1,1,fb,fc,fd,fe,ff,1        # 3 red -> 1 red birth
+fa,2,2,2,fb,fc,fd,fe,ff,2        # 3 blue -> 1 blue birth
+fa,da,db,ba,fb,fc,fd,fe,ff,3     # 2 red/orange + 1 non-red -> orange birth
+fa,ea,eb,ca,fb,fc,fd,fe,ff,4     # 2 blue/green + 1 non-blue -> green birth
+#
+#  Death of overcrowding with 4 or more live neighbours
+#
+aa,ab,ac,ad,ae,ga,gb,gc,gd,0
+#
+#  Death of loneliness with 0 or 1 live neighbours
+#
+aa,ga,fa,fb,fc,fd,fe,ff,fg,0
+#
+#  Stays the same with 2 live neighbours
+#
+1,aa,ab,fa,fb,fc,fd,fe,ff,1
+2,aa,ab,fa,fb,fc,fd,fe,ff,2
+3,aa,ab,fa,fb,fc,fd,fe,ff,3
+4,aa,ab,fa,fb,fc,fd,fe,ff,4
+#
+#  Stays the same with 3 live neighbours
+#
+1,aa,ab,ac,fa,fb,fc,fd,fe,1
+2,aa,ab,ac,fa,fb,fc,fd,fe,2
+3,aa,ab,ac,fa,fb,fc,fd,fe,3
+4,aa,ab,ac,fa,fb,fc,fd,fe,4
+#
+#  Get rid of any purple cells (border markers)
+#
+5,ga,gb,gc,gd,ge,gf,gg,gh,0
+#
+#
+@COLORS
+#
+#  choose the colors for the different states
+#
+#  format: <state red green blue comment>
+#
+#    R    G    B
+0  255  255  255   white (dead)
+1  255    0    0   red (primary: foreground)
+2    0    0  255   blue (primary: foreground)
+3  255  165    0   orange (red + yellow)
+4    0  255  165   green (blue + yellow)
+5  195    0  255   purple (border marker)
+#
+#
